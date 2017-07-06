@@ -8,11 +8,12 @@ this is on git
 
 import os
 import sys
-import pickle
+#import pickle
 import command_args
 import create_network
 import numpy as np
 import matplotlib.pyplot as plt
+#import json
 
 
 #Parse the command line arguments
@@ -20,31 +21,51 @@ xtc,tpr,ndx,skip,b,e,out=command_args.parseargs()
 
 if os.path.isfile("all_contacts.txt"):
     print("Contacts already existing in all_contacts.txt")
-    with open('all_contacts.txt','rb') as all_con:
-        all_contacts=pickle.load(all_con)
+#    with open('all_contacts.txt','rb') as all_con:
+#        all_contacts_set=json.loads(all_con)
+    with open('all_contacts.txt','r') as all_con:
+        all_contacts=[tuple(i_ac.strip().split(' ')) for i_ac in all_con]
+        #print(all_contacts)
+        #all_contacts_set=pickle.load(all_con)
+        #all_contacts=list(all_contacts_set)
 else:
     print("Fresh run")
-    all_contacts=set()                                      #create empty set to keep all contacts
+    all_contacts_set=set()                                      #create empty set to keep all contacts
     num_frames=0
 #    for i in range(0,10000,int(skip)):
     for i in range(int(b),int(e),int(skip)):
         num_frames= num_frames+1   
         fname=create_network.extract_frame(xtc,tpr,ndx,i) #Extracts frame and saves the PDB file with fname
         contacts=create_network.find_contact(fname) # Find the contacts ib protein structure
-        outf=open(fname[:-4]+'contacts.txt','wb')
-        pickle.dump(contacts,outf)
-        outf.close()
+        #outf=open(fname[:-4]+'contacts.txt','wb')
+        #pickle.dump(contacts,outf)
+#        outf=open(fname[:-4]+'contacts.json','w')
+#        json.dumps(contacts,outf)
+#        outf.close()
+        outf=open(fname[:-4]+'contacts.txt','w')
+        for temp_c in contacts:
+            outf.write(' '.join(str(s) for s in temp_c) + '\n')
+        outf.close()            
+            
         scon=set()
         for con in contacts:
             scon.add(con)
-        all_contacts=set(all_contacts).union(scon) #Add new contacts to all contact list
+        all_contacts_set=set(all_contacts_set).union(scon) #Add new contacts to all contact list
         #print(list(all_contacts)[0:5])
         #print(con_count)
-        print(len(all_contacts))
+        print(len(all_contacts_set))
         #print(sys.getsizeof(all_contacts))
         os.remove(fname)                            #removes the PDB file to save space    
-    with open('all_contacts.txt','wb') as all_out:
-        pickle.dump(all_contacts,all_out)
+    all_contacts=list(all_contacts_set)
+    #with open('all_contacts.txt','wb') as all_out:
+        #pickle.dump(all_contacts_set,all_out)
+#    with open('all_contacts.json','w') as all_out:
+#        json.dumps(all_contacts_set,all_out)
+    all_out=open('all_contacts.txt','w')
+    for temp_ac in all_contacts:
+        all_out.write(' '.join(str(s) for s in temp_ac) + '\n')
+    all_out.close() 
+    #all_contacts=list(all_contacts_set)
 
     
 if os.path.isfile("contact_matrix.txt"):
@@ -54,14 +75,23 @@ if os.path.isfile("contact_matrix.txt"):
     print(num_cont,num_frames)
     
 else:
+    num_frames=5
+#    contact_mat=np.zeros([len(all_contacts),num_frames])
     contact_mat=np.zeros([len(all_contacts),num_frames])
     count=0
     for i1 in range(int(b),int(e),int(skip)):
-        with open('frame'+str(i1)+'contacts.txt','rb') as rcon:
-            con_read=pickle.load(rcon)
+        #with open('frame'+str(i1)+'contacts.txt','rb') as rcon:
+            #con_read=pickle.load(rcon)
+#        with open('frame'+str(i1)+'contacts.json','r') as rcon:
+#            con_read=json.loads(rcon)
+        with open('frame'+str(i1)+'contacts.txt','r') as rcon:
+            con_read=[tuple(i_c.strip().split(' ')) for i_c in rcon]
+            #print(con_read)
         for item in con_read:
-            if item in list(all_contacts):
-                index=list(all_contacts).index(item)
+            #if item in list(all_contacts):
+            if item in all_contacts:
+                #index=list(all_contacts).index(item)
+                index=all_contacts.index(item)
                 contact_mat[index,count]=1
         count=count+1
     np.savetxt('contact_matrix.txt',contact_mat,fmt="%d")
@@ -71,10 +101,11 @@ else:
 
 sum_contact=np.sum(contact_mat,axis=1)
 cont_prob=sum_contact/num_frames    #Calculate contact probability
-# print(sum_contact)
-# print(cont_prob)
+print(sum_contact)
+print(cont_prob)
 # print(np.shape(cont_prob))
+ 
+contacts_selected=create_network.extract_dynamic_contacts(0.3,0.5, all_contacts,contact_mat,num_frames)  
+print(contacts_selected)
 #plt.plot(range(len(cont_prob)),sorted(cont_prob,reverse=True))
 #plt.show() 
-contacts_selected=create_network.extract_dynamic_contacts(0.1,0.8, all_contacts)  
-print(contacts_selected) 

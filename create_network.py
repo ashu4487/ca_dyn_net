@@ -10,6 +10,7 @@ import subprocess
 import shutil
 from distutils import spawn
 from Bio.PDB.PDBParser import PDBParser # for parsing PDB file
+import numpy as np
 #import command_args
 def extract_frame(xtc,tpr,ndx,i):
     print("Trajectory file read: %s",xtc)
@@ -69,7 +70,7 @@ def find_contact(fname):
     return contacts 
     
 
-def extract_dynamic_contacts(low_cut,high_cut,all_contacts):
+def extract_dynamic_contacts(low_cut,high_cut,all_contacts,contact_mat,num_frames):
     sum_contact=np.sum(contact_mat,axis=1)
     cont_prob=sum_contact/num_frames    #Calculate contact probability
     contacts_selected=[]
@@ -77,7 +78,8 @@ def extract_dynamic_contacts(low_cut,high_cut,all_contacts):
     for i in cont_prob:
         if low_cut<i<high_cut:
             contacts_selected.append(all_contacts[ind])
-            ind=ind+1
+            #print(i,ind)
+        ind=ind+1
     return contacts_selected
     
     
