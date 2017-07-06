@@ -34,19 +34,20 @@ def find_contact(fname):
                         temp_resid1=residue1.get_id()
                         temp_resid2=residue2.get_id()
                         if temp_resid1[0]==" " and temp_resid2[0]==" ": # only aa residues, excludes Water and other het atoms
-                            for atom1 in residue1:
-                                for atom2 in residue2:
-                                    if (atom1-atom2 < 4.5) and (abs(int(residue1.get_id()[1])-residue2.get_id()[1])>2):
-                                        contact=(residue1.get_id()[1],chain1.get_id(),residue2.get_id()[1],chain2.get_id())
-                                        contact_rev=(residue2.get_id()[1],chain2.get_id(),residue1.get_id()[1],chain1.get_id())
-                                        if contact in contacts or contact_rev in contacts :
-                                            pass
-                                        else:
-                                            #contacts.append((atom1.get_id(),resid1.get_id()[1],atom2.get_id(),resid2.get_id()[1]))
-                                            contacts.append(contact)
-                                            contact_count=contact_count+1
+                            if residue1['CA'] and residue2['CA']:       #selection of CA atoms
+                                atom1=residue1['CA']
+                                atom2=residue2['CA']
+                                if (atom1-atom2 <= 7) and (abs(int(residue1.get_id()[1])-residue2.get_id()[1])>2):
+                                    contact=(residue1.get_id()[1],chain1.get_id(),residue2.get_id()[1],chain2.get_id())
+                                    contact_rev=(residue2.get_id()[1],chain2.get_id(),residue1.get_id()[1],chain1.get_id())
+                                    if contact in contacts or contact_rev in contacts :
+                                        pass
                                     else:
-                                       pass 
+                                            #contacts.append((atom1.get_id(),resid1.get_id()[1],atom2.get_id(),resid2.get_id()[1]))
+                                        contacts.append(contact)
+                                        contact_count=contact_count+1
+                                else:
+                                    pass 
                         else:
                             pass
     return contacts 
