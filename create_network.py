@@ -69,9 +69,16 @@ def find_contact(fname):
     return contacts 
     
 
-# def extract_dynamic_contacts(low_cut,high_cut,contact_mat):
-#     sum_contact=np.sum(contact_mat,axis=1)
-#     cont_prob=sum_contact/num_frames    #Calculate contact probability
+def extract_dynamic_contacts(low_cut,high_cut,all_contacts):
+    sum_contact=np.sum(contact_mat,axis=1)
+    cont_prob=sum_contact/num_frames    #Calculate contact probability
+    contacts_selected=[]
+    ind=0
+    for i in cont_prob:
+        if low_cut<i<high_cut:
+            contacts_selected.append(all_contacts[ind])
+            ind=ind+1
+    return contacts_selected
     
     
     

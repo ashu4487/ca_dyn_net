@@ -71,8 +71,10 @@ else:
 
 sum_contact=np.sum(contact_mat,axis=1)
 cont_prob=sum_contact/num_frames    #Calculate contact probability
-print(sum_contact)
-print(cont_prob)
-print(np.shape(cont_prob))
+# print(sum_contact)
+# print(cont_prob)
+# print(np.shape(cont_prob))
 #plt.plot(range(len(cont_prob)),sorted(cont_prob,reverse=True))
-#plt.show()         
+#plt.show() 
+contacts_selected=create_network.extract_dynamic_contacts(0.1,0.8, all_contacts)  
+print(contacts_selected) 
