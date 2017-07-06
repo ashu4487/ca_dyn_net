@@ -50,6 +50,8 @@ else:
 if os.path.isfile("contact_matrix.txt"):
     print("Contact matrix already exists in folder. Now reading it")
     contact_mat=np.loadtxt('contact_matrix.txt')
+    [num_cont,num_frames]=np.shape(contact_mat)
+    print(num_cont,num_frames)
     
 else:
     contact_mat=np.zeros([len(all_contacts),num_frames])
@@ -70,6 +72,7 @@ else:
 sum_contact=np.sum(contact_mat,axis=1)
 cont_prob=sum_contact/num_frames    #Calculate contact probability
 print(sum_contact)
-print(contact_prob)
+print(cont_prob)
+print(np.shape(cont_prob))
 #plt.plot(range(len(cont_prob)),sorted(cont_prob,reverse=True))
 #plt.show()         
