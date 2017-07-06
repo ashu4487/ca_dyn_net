@@ -11,6 +11,22 @@ import shutil
 from distutils import spawn
 from Bio.PDB.PDBParser import PDBParser # for parsing PDB file
 #import command_args
+def extract_frame(xtc,tpr,ndx,i):
+    print("Trajectory file read: %s",xtc)
+    print("Structure file read: %s",tpr)
+    print("Index file read: %s",ndx)    
+    choice=open('choice.txt','r')                            # File with option to write the frames
+    fr=str(i)                                                #Frame number to be dumped converted to string for use within subprocess
+    fname='frame'+fr+'.pdb'                                  #PDB file in which frame is dumped
+    sout=open(os.devnull,'w')                                #dumping standard output from gromacs
+    if spawn.find_executable("gmx"):
+        subprocess.call(['gmx','trjconv', '-f', xtc, '-s', tpr, '-dump', fr,'-o', fname, '-n', ndx],stdin=choice, stdout=sout,stderr=subprocess.STDOUT)
+    else:
+        subprocess.call(['trjconv', '-f', xtc, '-s', tpr, '-dump', fr,'-o', fname, '-n', ndx],stdin=choice,stderr=subprocess.STDOUT)
+    choice.close()
+    print("Frame %s dumped in file %s",fr,fname)
+    return fname
+
 def find_contact(fname):
     if os.path.isfile(fname)==True:                                    #checks if the name saved in file_list is a file
         print(fname)
@@ -52,18 +68,10 @@ def find_contact(fname):
                             pass
     return contacts 
     
-def extract_frame(xtc,tpr,ndx,i):
-    print("Trajectory file read: %s",xtc)
-    print("Structure file read: %s",tpr)
-    print("Index file read: %s",ndx)    
-    choice=open('choice.txt','r')                            # File with option to write the frames
-    fr=str(i)                                                #Frame number to be dumped converted to string for use within subprocess
-    fname='frame'+fr+'.pdb'                                  #PDB file in which frame is dumped
-    sout=open(os.devnull,'w')                                #dumping standard output from gromacs
-    if spawn.find_executable("gmx"):
-        subprocess.call(['gmx','trjconv', '-f', xtc, '-s', tpr, '-dump', fr,'-o', fname, '-n', ndx],stdin=choice, stdout=sout,stderr=subprocess.STDOUT)
-    else:
-        subprocess.call(['trjconv', '-f', xtc, '-s', tpr, '-dump', fr,'-o', fname, '-n', ndx],stdin=choice,stderr=subprocess.STDOUT)
-    choice.close()
-    print("Frame %s dumped in file %s",fr,fname)
-    return fname
+
+# def extract_dynamic_contacts(low_cut,high_cut,contact_mat):
+#     sum_contact=np.sum(contact_mat,axis=1)
+#     cont_prob=sum_contact/num_frames    #Calculate contact probability
+    
+    
+    

@@ -66,7 +66,10 @@ else:
     
 #plt.imshow(contact_mat,aspect="auto",interpolation='nearest')
 #[num_cont,num_frames]=np.shape(contact_mat)
+
 sum_contact=np.sum(contact_mat,axis=1)
 cont_prob=sum_contact/num_frames    #Calculate contact probability
-plt.plot(range(len(cont_prob)),sorted(cont_prob,reverse=True))
-plt.show()         
+print(sum_contact)
+print(contact_prob)
+#plt.plot(range(len(cont_prob)),sorted(cont_prob,reverse=True))
+#plt.show()         
