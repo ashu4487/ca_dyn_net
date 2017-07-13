@@ -21,13 +21,10 @@ xtc,tpr,ndx,skip,b,e,out=command_args.parseargs()
 
 if os.path.isfile("all_contacts.txt"):
     print("Contacts already existing in all_contacts.txt")
-#    with open('all_contacts.txt','rb') as all_con:
-#        all_contacts_set=json.loads(all_con)
     with open('all_contacts.txt','r') as all_con:
         all_contacts=[tuple(i_ac.strip().split(' ')) for i_ac in all_con]
         #print(all_contacts)
-        #all_contacts_set=pickle.load(all_con)
-        #all_contacts=list(all_contacts_set)
+
 else:
     print("Fresh run")
     all_contacts_set=set()                                      #create empty set to keep all contacts
@@ -75,7 +72,7 @@ if os.path.isfile("contact_matrix.txt"):
     print(num_cont,num_frames)
     
 else:
-    num_frames=5
+    num_frames=100 #### only for test
 #    contact_mat=np.zeros([len(all_contacts),num_frames])
     contact_mat=np.zeros([len(all_contacts),num_frames])
     count=0
@@ -86,7 +83,7 @@ else:
 #            con_read=json.loads(rcon)
         with open('frame'+str(i1)+'contacts.txt','r') as rcon:
             con_read=[tuple(i_c.strip().split(' ')) for i_c in rcon]
-            #print(con_read)
+            print(con_read)
         for item in con_read:
             #if item in list(all_contacts):
             if item in all_contacts:
@@ -105,8 +102,10 @@ print(sum_contact)
 print(cont_prob)
 # print(np.shape(cont_prob))
  
-contacts_selected,sel_cont_rows=create_network.extract_dynamic_contacts(0.3,0.5, all_contacts,contact_mat,num_frames)  
-print(contacts_selected)
-print(sel_cont_rows)
+contacts_selected,sel_cont_rows=create_network.extract_dynamic_contacts(0.2,0.7, all_contacts,contact_mat,num_frames)  
+print(len(contacts_selected))
+#print(len(sel_cont_rows))
+print(np.shape(sel_cont_rows))
+create_network.PCA_contact_mat(sel_cont_rows)
 #plt.plot(range(len(cont_prob)),sorted(cont_prob,reverse=True))
 #plt.show() 

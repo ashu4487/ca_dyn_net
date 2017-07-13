@@ -11,11 +11,16 @@ import shutil
 from distutils import spawn
 from Bio.PDB.PDBParser import PDBParser # for parsing PDB file
 import numpy as np
+from sklearn.decomposition import PCA
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import scale
+
 #import command_args
 def extract_frame(xtc,tpr,ndx,i):
-    print("Trajectory file read: %s",xtc)
-    print("Structure file read: %s",tpr)
-    print("Index file read: %s",ndx)    
+    print("Trajectory file read: %s" %(xtc))
+    print("Structure file read: %s" %(tpr))
+    print("Index file read: %s" %(ndx))    
     choice=open('choice.txt','r')                            # File with option to write the frames
     fr=str(i)                                                #Frame number to be dumped converted to string for use within subprocess
     fname='frame'+fr+'.pdb'                                  #PDB file in which frame is dumped
@@ -79,10 +84,37 @@ def extract_dynamic_contacts(low_cut,high_cut,all_contacts,contact_mat,num_frame
     for i in cont_prob:
         if low_cut<i<high_cut:
             contacts_selected.append(all_contacts[ind])
-            selected_cont_rows.append(contact_mat[ind:])
+            selected_cont_rows.append(contact_mat[ind,:])
             #print(i,ind)
         ind=ind+1
-    return contacts_selected,selected_cont_rows
+    selected_cont_mat=np.vstack(selected_cont_rows)
+    return contacts_selected,selected_cont_mat
+
+def PCA_contact_mat(selected_cont_mat):
+
+#Load data set
+#data = pd.read_csv('Big_Mart_PCA.csv')
+
+#convert it to numpy arrays
+#X=data.values
+
+#Scaling the values
+#X = scale(X)
+
+    pca = PCA(n_components=2)
+    pca.fit(selected_cont_mat)
+    trans_cont_mat=pca.transform(selected_cont_mat)
     
+    #The amount of variance that each PC explains
+    #var= pca.explained_variance_ratio_
     
+    #Cumulative Variance explains
+    var1=np.cumsum(np.round(pca.explained_variance_ratio_, decimals=4)*100)
+    print(var1)
+   # plt.plot(var1)
+    plt.scatter(trans_cont_mat[:,0],trans_cont_mat[:,1])
+    plt.show()
+        
+        
+        
     
