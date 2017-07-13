@@ -74,13 +74,15 @@ def extract_dynamic_contacts(low_cut,high_cut,all_contacts,contact_mat,num_frame
     sum_contact=np.sum(contact_mat,axis=1)
     cont_prob=sum_contact/num_frames    #Calculate contact probability
     contacts_selected=[]
+    selected_cont_rows=[]
     ind=0
     for i in cont_prob:
         if low_cut<i<high_cut:
             contacts_selected.append(all_contacts[ind])
+            selected_cont_rows.append(contact_mat[ind:])
             #print(i,ind)
         ind=ind+1
-    return contacts_selected
+    return contacts_selected,selected_cont_rows
     
     
     
