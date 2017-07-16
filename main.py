@@ -17,6 +17,7 @@ import matplotlib.pyplot as plt
 
 #Parse the command line arguments
 xtc,tpr,ndx,skip,b,e,out=command_args.parseargs()
+##### Determining all unique contacts in the each frame 
 
 if os.path.isfile("all_contacts.txt"):
     print("Contacts already existing in all_contacts.txt")
@@ -31,13 +32,8 @@ else:
     for i in range(int(b),int(e),int(skip)):
         num_frames= num_frames+1   
         fname=create_network.extract_frame(xtc,tpr,ndx,i) #Extracts frame and saves the PDB file with fname
-        contacts=create_network.find_contact(fname) # Find the contacts ib protein structure
-        #outf=open(fname[:-4]+'contacts.txt','wb')
-        #pickle.dump(contacts,outf)
-#        outf=open(fname[:-4]+'contacts.json','w')
-#        json.dumps(contacts,outf)
-#        outf.close()
-        outf=open(fname[:-4]+'contacts.txt','w')
+        contacts=create_network.find_contact(fname) # Find the contacts in protein structure
+        outf=open(fname[:-4]+'contacts.txt','a')
         for temp_c in contacts:
             outf.write(' '.join(str(s) for s in temp_c) + '\n')
         outf.close()            
@@ -45,6 +41,7 @@ else:
         scon=set()
         for con in contacts:
             scon.add(con)
+            print(con)
         all_contacts_set=set(all_contacts_set).union(scon) #Add new contacts to all contact list
         #print(list(all_contacts)[0:5])
         #print(con_count)
@@ -52,16 +49,12 @@ else:
         #print(sys.getsizeof(all_contacts))
         os.remove(fname)                            #removes the PDB file to save space    
     all_contacts=list(all_contacts_set)
-    #with open('all_contacts.txt','wb') as all_out:
-        #pickle.dump(all_contacts_set,all_out)
-#    with open('all_contacts.json','w') as all_out:
-#        json.dumps(all_contacts_set,all_out)
-    all_out=open('all_contacts.txt','w')
+    all_out=open('all_contacts.txt','a')
     for temp_ac in all_contacts:
         all_out.write(' '.join(str(s) for s in temp_ac) + '\n')
     all_out.close() 
-    #all_contacts=list(all_contacts_set)
 
+#### Forming contact matrix
     
 if os.path.isfile("contact_matrix.txt"):
     print("Contact matrix already exists in folder. Now reading it")
@@ -70,22 +63,15 @@ if os.path.isfile("contact_matrix.txt"):
     print(num_cont,num_frames)
     
 else:
-    num_frames=100 #### only for test
-#    contact_mat=np.zeros([len(all_contacts),num_frames])
+#    num_frames=100 #### only for test
     contact_mat=np.zeros([len(all_contacts),num_frames])
     count=0
     for i1 in range(int(b),int(e),int(skip)):
-        #with open('frame'+str(i1)+'contacts.txt','rb') as rcon:
-            #con_read=pickle.load(rcon)
-#        with open('frame'+str(i1)+'contacts.json','r') as rcon:
-#            con_read=json.loads(rcon)
         with open('frame'+str(i1)+'contacts.txt','r') as rcon:
             con_read=[tuple(i_c.strip().split(' ')) for i_c in rcon]
             print(con_read)
         for item in con_read:
-            #if item in list(all_contacts):
             if item in all_contacts:
-                #index=list(all_contacts).index(item)
                 index=all_contacts.index(item)
                 contact_mat[index,count]=1
         count=count+1

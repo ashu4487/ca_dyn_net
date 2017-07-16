@@ -65,6 +65,7 @@ def find_contact(fname):
                         contact_count=contact_count+1
                 else:
                     pass 
+    return contacts 
                 
             
             
