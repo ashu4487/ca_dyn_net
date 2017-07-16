@@ -1,19 +1,18 @@
 # -*- coding: utf-8 -*-
 """
 Created on Fri Jun  2 11:08:15 2017
-this is on git
+This is the main execution script for converting trajectories to dynamic networks and doing a bunch of stuff with them.
+Files formed- all_contacts.txt, framesXXXX_contacts.txt, comntact_matrix.txt
 
 @author: ashutosh
 """
 
 import os
 import sys
-#import pickle
 import command_args
 import create_network
 import numpy as np
 import matplotlib.pyplot as plt
-#import json
 
 
 #Parse the command line arguments
@@ -29,7 +28,6 @@ else:
     print("Fresh run")
     all_contacts_set=set()                                      #create empty set to keep all contacts
     num_frames=0
-#    for i in range(0,10000,int(skip)):
     for i in range(int(b),int(e),int(skip)):
         num_frames= num_frames+1   
         fname=create_network.extract_frame(xtc,tpr,ndx,i) #Extracts frame and saves the PDB file with fname
