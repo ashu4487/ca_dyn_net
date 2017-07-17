@@ -23,7 +23,7 @@ if os.path.isfile("all_contacts.txt"):
     print("Contacts already existing in all_contacts.txt")
     with open('all_contacts.txt','r') as all_con:
         all_contacts=[tuple(i_ac.strip().split(' ')) for i_ac in all_con]
-        #print(all_contacts)
+        print(all_contacts)
 
 else:
     print("Fresh run")

@@ -55,8 +55,8 @@ def find_contact(fname):
                 atom1=temp_struct[0][chain_seq[i]][res_ids[i]]['CA']
                 atom2=temp_struct[0][chain_seq[j]][res_ids[j]]['CA']
                 if (atom1-atom2 <= 7) and (abs(int(res_ids[i])-res_ids[j])>2):
-                    contact=(res_ids[i],chain_seq[i],res_ids[j],chain_seq[j])
-                    contact_rev=(res_ids[j],chain_seq[j],res_ids[i],chain_seq[i])
+                    contact=(str(res_ids[i]),chain_seq[i],str(res_ids[j]),chain_seq[j])
+                    contact_rev=(str(res_ids[j]),chain_seq[j],str(res_ids[i]),chain_seq[i])
                     if contact in contacts or contact_rev in contacts :
                         pass
                     else:
