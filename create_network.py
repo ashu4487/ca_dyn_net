@@ -132,7 +132,7 @@ def PCA_contact_mat(selected_cont_mat):
 #Scaling the values
 #X = scale(X)
 
-    pca = PCA(n_components=2)
+    pca = PCA(n_components=10)
     pca.fit(selected_cont_mat)
     trans_cont_mat=pca.transform(selected_cont_mat)
     
